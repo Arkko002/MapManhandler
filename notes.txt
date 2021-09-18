@@ -1,0 +1,16 @@
+Trigger: .bsp file uploaded to directory X
+
+Steps:
+1. bsp compressed with bzip2
+2. bsp moved to /home/ubuntu/NT/shared/maps
+3. bzip2 file moved to /home/ubuntu/www/dead.tokyo/304975/maps
+4. name of the file appended to /home/ubuntu/NT/shared/maplist.txt
+5. name of the file appended to /home/ubuntu/NT/shared/adminmenu_maplist.ini
+6. name of the map appended to .../maplist_nominations.txt
+
+Additional requirements:
+All text files need to be checked for duplicate entries.
+Paths need to be configurable in source or via a config file.
+
+Good to have:
+Contents of all text files sorted alphabetically.
