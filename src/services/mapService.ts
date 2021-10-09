@@ -1,5 +1,5 @@
 import { promisify } from "util";
-:import { readdir, rename, appendFile } from "fs";
+import { readdir, rename, appendFile } from "fs";
 
 const readdirPromise = promisify(readdir);
 const renamePromise = promisify(rename);
@@ -21,7 +21,6 @@ export const moveMapFiles = async (
   bzipMovePath: string
 ): Promise<void> => {
   try {
-	  thi
     await renamePromise(bspFilePath, bspMovePath);
     await renamePromise(bzipFilePath, bzipMovePath);
   } catch (error) {
