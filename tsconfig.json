@@ -4,7 +4,7 @@
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
-    "outFile": "../../built/local/tsc.js",
+    "outDir": "dist",
     "sourceMap": true
   },
   "extends": "@tsconfig/node14/tsconfig.json",
