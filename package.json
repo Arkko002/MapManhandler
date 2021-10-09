@@ -2,7 +2,7 @@
   "name": "mapmanhandler",
   "version": "1.0.0",
   "description": "Handles your Neotokyo maps with a strong manly attitude",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc"

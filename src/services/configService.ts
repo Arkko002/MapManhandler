@@ -25,6 +25,10 @@ export const loadConfig = async (): Promise<Config> => {
 };
 
 export const loadMapList = async (mapListPath: string): Promise<string[]> => {
-  const fileContent = await readFilePromise(mapListPath, "utf-8");
-  return fileContent.split("\n");
+  try {
+    const fileContent = await readFilePromise(mapListPath, "utf-8");
+    return fileContent.split("\n");
+  } catch (error) {
+    throw new Error(`Couldn't load a map list file: ${error}`);
+  }
 };
