@@ -1,9 +1,9 @@
 import { promisify } from "util";
-import { readdir, rename, appendFile } from "fs";
+import { readdir, rename, writeFile } from "fs";
 
 const readdirPromise = promisify(readdir);
 const renamePromise = promisify(rename);
-const appendFilePromise = promisify(appendFile);
+const writeFilePromise = promisify(writeFile);
 
 export const getNewMaps = async (
   mapUploadPath: string,
@@ -28,17 +28,14 @@ export const moveMapFiles = async (
   }
 };
 
-export const appendMapNameToLists = async (
-  mapName: string,
-  mapListPath: string,
-  mapAdminListPath: string,
-  mapNominationListPath: string
+export const writeMapListToFile = async (
+  mapList: string[],
+  mapListPath: string
 ): Promise<void> => {
   try {
-    await appendFilePromise(mapListPath, mapName, "utf-8");
-    await appendFilePromise(mapAdminListPath, mapName, "utf-8");
-    await appendFilePromise(mapNominationListPath, mapName, "utf-8");
+    const mapListString = mapList.join("\n");
+    await writeFilePromise(mapListPath, mapListString);
   } catch (error) {
-    throw new Error(`Error while appending map name to lists: ${error}`);
+    throw new Error(`Error while writing map name to lists: ${error}`);
   }
 };

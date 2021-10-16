@@ -1,8 +1,12 @@
 import { Config } from "./models/config";
 import { compressMapFile } from "./services/compressService";
-import { loadConfig, loadMapList } from "./services/configService";
 import {
-  appendMapNameToLists,
+  loadConfig,
+  loadMapList,
+  backupMapFile,
+} from "./services/configService";
+import {
+  writeMapListToFile,
   getNewMaps,
   moveMapFiles,
 } from "./services/mapService";
@@ -17,6 +21,12 @@ export const main = async (): Promise<void> => {
   );
 
   const newMaps: string[] = await getNewMaps(config.bspUploadPath, mapList);
+  if (newMaps.length) {
+    await backupMapFile(config.mapListPath);
+    await backupMapFile(config.mapAdminListPath);
+    await backupMapFile(config.mapNominationsListPath);
+  }
+
   for (const map of newMaps) {
     const bzipFilePath: string = await compressMapFile(map);
 
@@ -27,11 +37,19 @@ export const main = async (): Promise<void> => {
       config.bzipMovePath
     );
 
-    await appendMapNameToLists(
-      map,
-      config.mapListPath,
-      config.mapAdminListPath,
-      config.mapNominationsListPath
-    );
+    mapList.push(map);
+    mapAdminList.push(map);
+    mapNominationList.push(map);
   }
+
+  const optimizedMapList = Array.from(new Set(mapList)).sort();
+  const optimizedAdminList = Array.from(new Set(mapList)).sort();
+  const optimizedNominationList = Array.from(new Set(mapList)).sort();
+
+  await writeMapListToFile(optimizedMapList, config.mapListPath);
+  await writeMapListToFile(optimizedAdminList, config.mapAdminListPath);
+  await writeMapListToFile(
+    optimizedNominationList,
+    config.mapNominationsListPath
+  );
 };
