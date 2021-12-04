@@ -1,40 +1,36 @@
-import { promisify } from "util";
-import { readdir, rename, writeFile } from "fs";
+import { readdirSync, renameSync, writeFileSync } from "fs";
+import { MapList } from "../models/mapList";
 
-const readdirPromise = promisify(readdir);
-const renamePromise = promisify(rename);
-const writeFilePromise = promisify(writeFile);
-
-export const getNewMaps = async (
+export const getNewMaps = (
   mapUploadPath: string,
   exisitngMapsList: string[]
-): Promise<string[]> => {
-  const uploadedFiles: string[] = await readdirPromise(mapUploadPath, "utf-8");
+): string[] => {
+  const uploadedFiles: string[] = readdirSync(mapUploadPath, "utf-8");
 
   return uploadedFiles.filter((map) => !exisitngMapsList.includes(map));
 };
 
-export const moveMapFiles = async (
-  bspFilePath: string,
-  bzipFilePath: string,
-  bspMovePath: string,
-  bzipMovePath: string
-): Promise<void> => {
+export const optimiseMapList = (mapList: MapList): void => {
+  mapList.mapList = Array.from(new Set(mapList.mapList))
+    .sort()
+    .filter((x) => x);
+};
+
+export const moveMapFiles = (
+  oldFilePath: string,
+  newFilePath: string
+): void => {
   try {
-    await renamePromise(bspFilePath, bspMovePath);
-    await renamePromise(bzipFilePath, bzipMovePath);
+    renameSync(oldFilePath, newFilePath);
   } catch (error) {
     throw new Error(`Error while moving map files: ${error}`);
   }
 };
 
-export const writeMapListToFile = async (
-  mapList: string[],
-  mapListPath: string
-): Promise<void> => {
+export const writeMapListToFile = (mapList: MapList): void => {
   try {
-    const mapListString = mapList.join("\n");
-    await writeFilePromise(mapListPath, mapListString);
+    const mapListString = mapList.mapList.join("\n");
+    writeFileSync(mapList.mapFilePath, mapListString);
   } catch (error) {
     throw new Error(`Error while writing map name to lists: ${error}`);
   }

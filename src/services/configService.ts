@@ -1,14 +1,14 @@
-import { promisify } from "util";
-import { readFile, rename } from "fs";
+import { copyFileSync, readFileSync } from "fs";
 import { Config } from "../models/config";
+import { MapList } from "../models/mapList";
 
-const readFilePromise = promisify(readFile);
-const renamePromise = promisify(rename);
-
-export const loadConfig = async (): Promise<Config> => {
+export const loadConfig = (): Config => {
   let configFile: string;
   try {
-    configFile = await readFilePromise("../config.json", "utf-8");
+    configFile = readFileSync(
+      "/home/arkko/Projects/mapManhandler.ts/src/config.json",
+      "utf-8"
+    );
   } catch (error) {
     throw new Error(`Could not read the config file from usual path: ${error}`);
   }
@@ -25,22 +25,36 @@ export const loadConfig = async (): Promise<Config> => {
   return configObj;
 };
 
-export const loadMapList = async (mapListPath: string): Promise<string[]> => {
+const loadMapList = (mapListPath: string): string[] => {
   try {
-    const fileContent = await readFilePromise(mapListPath, "utf-8");
+    const fileContent = readFileSync(mapListPath, "utf-8");
     return fileContent.split("\n");
   } catch (error) {
     throw new Error(`Couldn't load a map list file: ${error}`);
   }
 };
 
-export const backupMapFile = async (mapFilePath: string): Promise<string> => {
+export const getMapList = (
+  mapListArray: MapList[],
+  mapListPath: string
+): void => {
+  if (mapListPath) {
+    mapListArray.push({
+      mapList: loadMapList(mapListPath),
+      mapFilePath: mapListPath,
+    });
+  }
+};
+
+export const backupMapFile = (mapList: MapList): string => {
   try {
     const now = Date.now();
-    const newPath = `${mapFilePath}-bk-${now}`;
-    await renamePromise(mapFilePath, newPath);
+    const newPath = `${mapList.mapFilePath}-bk-${now}`;
+    copyFileSync(mapList.mapFilePath, newPath);
     return newPath;
   } catch (error) {
-    throw new Error(`Couldn't backup a map file (${mapFilePath}) - ${error}`);
+    throw new Error(
+      `Couldn't backup a map file (${mapList.mapFilePath}) - ${error}`
+    );
   }
 };

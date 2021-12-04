@@ -24,7 +24,8 @@
   },
   "homepage": "https://github.com/Arkko002/MapManhandler#readme",
   "dependencies": {
-    "7zip-min": "^1.4.0"
+    "7zip-min": "^1.4.0",
+    "ts-node": "^10.4.0"
   },
   "devDependencies": {
     "@tsconfig/node14": "^1.0.1",

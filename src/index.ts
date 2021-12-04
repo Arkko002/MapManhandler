@@ -1,55 +1,65 @@
-import { Config } from "./models/config";
-import { compressMapFile } from "./services/compressService";
+import { Config, MapList } from "./models/config";
+import { pack } from "7zip-min";
 import {
   loadConfig,
-  loadMapList,
   backupMapFile,
+  getMapList,
 } from "./services/configService";
 import {
   writeMapListToFile,
   getNewMaps,
   moveMapFiles,
+  optimiseMapList,
 } from "./services/mapService";
 
 export const main = async (): Promise<void> => {
-  const config: Config = await loadConfig();
+  const config: Config = loadConfig();
+  const mapLists: MapList[] = new MapList();
 
-  const mapList: string[] = await loadMapList(config.mapListPath);
-  const mapAdminList: string[] = await loadMapList(config.mapAdminListPath);
-  const mapNominationList: string[] = await loadMapList(
-    config.mapNominationsListPath
+  getMapList(mapLists, config.mapListPath);
+  getMapList(mapLists, config.mapAdminListPath);
+  getMapList(mapLists, config.mapNominationsListPath);
+
+  const newMaps: string[] = getNewMaps(
+    config.bspUploadPath,
+    mapLists[0].mapFilePath
   );
+  if (!newMaps.length) {
+    console.log("Found no new maps, exiting");
+    return;
+  }
 
-  const newMaps: string[] = await getNewMaps(config.bspUploadPath, mapList);
-  if (newMaps.length) {
-    await backupMapFile(config.mapListPath);
-    await backupMapFile(config.mapAdminListPath);
-    await backupMapFile(config.mapNominationsListPath);
+  for (const map of mapLists) {
+    backupMapFile(map);
   }
 
   for (const map of newMaps) {
-    const bzipFilePath: string = await compressMapFile(map);
+    const fullBspPath = `${config.bspUploadPath}/${map}`;
+    const fullBzipPath = fullBspPath.split(".")[0] + ".bzip2";
 
-    await moveMapFiles(
-      map,
-      bzipFilePath,
-      config.bspMovePath,
-      config.bzipMovePath
-    );
+    pack(fullBspPath, fullBzipPath, (err) => {
+      if (err) {
+        throw new Error(`Problem during compressing map file: ${err}`);
+      }
 
-    mapList.push(map);
-    mapAdminList.push(map);
-    mapNominationList.push(map);
+      const archiveFile = fullBzipPath.split("/");
+      const lastIndex = archiveFile.length;
+
+      const newBspPath = `${config.bspMovePath}/${map}`;
+      const newBzipPath = `${config.bzipMovePath}/${
+        archiveFile[lastIndex - 1]
+      }`;
+
+      moveMapFiles(fullBspPath, newBspPath);
+      moveMapFiles(fullBzipPath, newBzipPath);
+
+      mapLists.forEach((m: MapList) => {
+        m.mapList.push(map);
+        optimiseMapList(m);
+        writeMapListToFile(m);
+      });
+    });
   }
-
-  const optimizedMapList = Array.from(new Set(mapList)).sort();
-  const optimizedAdminList = Array.from(new Set(mapList)).sort();
-  const optimizedNominationList = Array.from(new Set(mapList)).sort();
-
-  await writeMapListToFile(optimizedMapList, config.mapListPath);
-  await writeMapListToFile(optimizedAdminList, config.mapAdminListPath);
-  await writeMapListToFile(
-    optimizedNominationList,
-    config.mapNominationsListPath
-  );
 };
+
+main().then();

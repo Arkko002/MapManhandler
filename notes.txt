@@ -14,3 +14,4 @@ Paths need to be configurable in source or via a config file.
 
 Good to have:
 Contents of all text files sorted alphabetically.
+Per user rules, based on metadata appended in upload service
