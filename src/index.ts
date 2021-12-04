@@ -12,7 +12,7 @@ import {
   optimiseMapList,
 } from "./services/mapService";
 
-export const main = async (): Promise<void> => {
+export const main = (): void => {
   const config: Config = loadConfig();
   const mapLists: MapList[] = new MapList();
 
@@ -62,4 +62,4 @@ export const main = async (): Promise<void> => {
   }
 };
 
-main().then();
+main();
