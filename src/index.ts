@@ -1,4 +1,5 @@
-import { Config, MapList } from "./models/config";
+import { Config } from "./models/config";
+import { MapList } from "./models/mapList";
 import { pack } from "7zip-min";
 import {
   loadConfig,
@@ -14,7 +15,7 @@ import {
 
 export const main = (): void => {
   const config: Config = loadConfig();
-  const mapLists: MapList[] = new MapList();
+  const mapLists: MapList[] = new Array<MapList>();
 
   getMapList(mapLists, config.mapListPath);
   getMapList(mapLists, config.mapAdminListPath);
@@ -22,7 +23,7 @@ export const main = (): void => {
 
   const newMaps: string[] = getNewMaps(
     config.bspUploadPath,
-    mapLists[0].mapFilePath
+    mapLists[0].mapList
   );
   if (!newMaps.length) {
     console.log("Found no new maps, exiting");

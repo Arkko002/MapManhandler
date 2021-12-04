@@ -30,7 +30,7 @@ export const moveMapFiles = (
 export const writeMapListToFile = (mapList: MapList): void => {
   try {
     const mapListString = mapList.mapList.join("\n");
-    writeFileSync(mapList.mapFilePath, mapListString);
+    writeFileSync(mapList.mapFilePath, mapListString, { encoding: "utf8" });
   } catch (error) {
     throw new Error(`Error while writing map name to lists: ${error}`);
   }
