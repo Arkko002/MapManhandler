@@ -1,29 +1,5 @@
 import { copyFileSync, readFileSync } from "fs";
-import { Config } from "../models/config";
 import { MapList } from "../models/mapList";
-
-export const loadConfig = (): Config => {
-  let configFile: string;
-  try {
-    configFile = readFileSync(
-      "/home/arkko/Projects/mapManhandler.ts/src/config.json",
-      "utf-8"
-    );
-  } catch (error) {
-    throw new Error(`Could not read the config file from usual path: ${error}`);
-  }
-
-  let configObj: Config;
-  try {
-    configObj = JSON.parse(configFile);
-  } catch (error) {
-    throw new Error(
-      `Could not parse config file contents into JSON, check the formatting or missing entries: ${error}`
-    );
-  }
-
-  return configObj;
-};
 
 const loadMapList = (mapListPath: string): string[] => {
   try {

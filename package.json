@@ -24,7 +24,9 @@
   },
   "homepage": "https://github.com/Arkko002/MapManhandler#readme",
   "dependencies": {
+    "@types/convict": "^6.1.1",
     "7zip-min": "^1.4.0",
+    "convict": "^6.2.1",
     "ts-node": "^10.4.0"
   },
   "devDependencies": {

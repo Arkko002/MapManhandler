@@ -1,0 +1,8 @@
+{
+  "uploadFolder": "/home/arkko/Projects/mapManhandler.ts/test/upload",
+  "bspMovePath": "/home/arkko/Projects/mapManhandler.ts/test/move",
+  "bzipMovePath": "/home/arkko/Projects/mapManhandler.ts/test/move",
+  "mapFile": "/home/arkko/Projects/mapManhandler.ts/test/map.txt",
+  "mapAdminFile": "",
+  "mapNominationsFile": ""
+}

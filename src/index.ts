@@ -1,11 +1,7 @@
-import { Config } from "./models/config";
+import config from "./config/config.json";
 import { MapList } from "./models/mapList";
 import { pack } from "7zip-min";
-import {
-  loadConfig,
-  backupMapFile,
-  getMapList,
-} from "./services/configService";
+import { backupMapFile, getMapList } from "./services/configService";
 import {
   writeMapListToFile,
   getNewMaps,
@@ -14,15 +10,23 @@ import {
 } from "./services/mapService";
 
 export const main = (): void => {
-  const config: Config = loadConfig();
   const mapLists: MapList[] = new Array<MapList>();
 
-  getMapList(mapLists, config.mapListPath);
-  getMapList(mapLists, config.mapAdminListPath);
-  getMapList(mapLists, config.mapNominationsListPath);
+  const mapFile: string = config.mapFile;
+  getMapList(mapLists, mapFile);
+
+  if (config.mapAdminFile) {
+    const mapAdminFile: string = config.mapAdminFile;
+    getMapList(mapLists, mapAdminFile);
+  }
+
+  if (config.mapNominationsFile) {
+    const mapNominationFile: string = config.mapNominationsFile;
+    getMapList(mapLists, mapNominationFile);
+  }
 
   const newMaps: string[] = getNewMaps(
-    config.bspUploadPath,
+    config.uploadFolder,
     mapLists[0].mapList
   );
   if (!newMaps.length) {
@@ -35,7 +39,7 @@ export const main = (): void => {
   }
 
   for (const map of newMaps) {
-    const fullBspPath = `${config.bspUploadPath}/${map}`;
+    const fullBspPath = `${config.uploadFolder}/${map}`;
     const fullBzipPath = fullBspPath.split(".")[0] + ".bzip2";
 
     pack(fullBspPath, fullBzipPath, (err) => {

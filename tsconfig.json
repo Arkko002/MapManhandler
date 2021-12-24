@@ -5,7 +5,8 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "outDir": "dist",
-    "sourceMap": true
+    "sourceMap": true,
+    "resolveJsonModule": true
   },
   "extends": "@tsconfig/node14/tsconfig.json",
   "include": ["src/**/*"],
