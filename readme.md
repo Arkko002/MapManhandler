@@ -1,6 +1,6 @@
 ## Installation
 
-Source files are in src/ folder, you can build them by running
+Source files are in src/ folder, you can build them by running this in main folder (where package.json is):
 ```
 npm i
 
